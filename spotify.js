@@ -1,6 +1,8 @@
+'use strict';
+
 // !!!FILL IN YOUR CLIENT ID FROM YOUR APPLICATION CONSOLE:
 // https://developer.spotify.com/my-applications/#!/applications !!!
-const CLIENT_ID = 'YOUR_ID_HERE';
+const CLIENT_ID = 'd242465e03f248c986b806cca05b462d';
 
 const getFromApi = function (endpoint, query = {}) {
   // You won't need to change anything in this function, but you will use this function 
@@ -27,11 +29,39 @@ const getFromApi = function (endpoint, query = {}) {
 let artist;
 
 const getArtist = function (name) {
-  // Edit me!
-  // (Plan to call `getFromApi()` several times over the whole exercise from here!)
+  console.log('running getArtist');
+  const spotifyEndPt = 'search';
+  const query = {
+    q: name,
+    limit: 1,
+    type: 'artist'
+  };
+
+  //fetch().then   res
+
+  //Promise()
+
+  //artists/{id}/related-artists
+
+  return getFromApi(spotifyEndPt, query)
+    .then(res => {
+      console.log('in p.then block');
+      console.log(res);
+      artist=res.artists.items[0];
+      console.log(artist);
+      const spotifyRelArtistsEndPt = `artists/${artist.id}/related-artists`;
+      return getFromApi(spotifyRelArtistsEndPt);
+    })
+    .then(res => {
+      artist.related = res.artists;
+      return artist;
+    })
+    .catch(err => {
+      console.log('error');
+      console.log(err);
+    });
+
 };
-
-
 
 
 
