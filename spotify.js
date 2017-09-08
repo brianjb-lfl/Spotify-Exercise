@@ -29,7 +29,6 @@ const getFromApi = function (endpoint, query = {}) {
 let artist;
 
 const getArtist = function (name) {
-  console.log('running getArtist');
   const spotifyEndPt = 'search';
   const query = {
     q: name,
@@ -45,8 +44,6 @@ const getArtist = function (name) {
 
   return getFromApi(spotifyEndPt, query)
     .then(res => {
-      console.log('in p.then block');
-      console.log(res);
       artist=res.artists.items[0];
       console.log(artist);
       const spotifyRelArtistsEndPt = `artists/${artist.id}/related-artists`;
@@ -54,14 +51,27 @@ const getArtist = function (name) {
     })
     .then(res => {
       artist.related = res.artists;
-      return artist;
+      console.log(artist);
+      for (let i=0; i<artist.related.length; i++) {
+        const spotifyTopTracks = `artists/${artist.related[i].id}/top-tracks?country=US`;
+        return getFromApi(spotifyTopTracks);
+      
+      
+  const allPromise = Promise.all(topTracks);
+  return allPromise;
     })
+    .then(responses => {
+        for ();
+    })
+    //   return artist;
+    // })
     .catch(err => {
       console.log('error');
       console.log(err);
     });
-
 };
+
+
 
 
 
