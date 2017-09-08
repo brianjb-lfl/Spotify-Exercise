@@ -28,6 +28,8 @@ const getFromApi = function (endpoint, query = {}) {
 
 let artist;
 
+// ***********************
+
 const getArtist = function (name) {
   const spotifyEndPt = 'search';
   const query = {
@@ -36,42 +38,31 @@ const getArtist = function (name) {
     type: 'artist'
   };
 
-  //fetch().then   res
-
-  //Promise()
-
-  //artists/{id}/related-artists
-
   return getFromApi(spotifyEndPt, query)
     .then(res => {
       artist=res.artists.items[0];
-      console.log(artist);
       const spotifyRelArtistsEndPt = `artists/${artist.id}/related-artists`;
       return getFromApi(spotifyRelArtistsEndPt);
     })
     .then(res => {
       artist.related = res.artists;
-      console.log(artist);
+      let promiseArr = [];                            //array.map
       for (let i=0; i<artist.related.length; i++) {
-        const spotifyTopTracks = `artists/${artist.related[i].id}/top-tracks?country=US`;
-        return getFromApi(spotifyTopTracks);
-      
-      
-  const allPromise = Promise.all(topTracks);
-  return allPromise;
+        promiseArr.push(getFromApi(`artists/${artist.related[i].id}/top-tracks?country=US`));
+      }
+      return Promise.all(promiseArr);
     })
     .then(responses => {
-        for ();
+      for(let i = 0; i < responses.length; i++){
+        artist.related[i].tracks = responses[i].tracks;
+      }
+      return artist;
     })
-    //   return artist;
-    // })
     .catch(err => {
       console.log('error');
       console.log(err);
     });
 };
-
-
 
 
 
